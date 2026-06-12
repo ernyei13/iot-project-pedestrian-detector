@@ -103,12 +103,37 @@ get_host_ip() {
   exit 1
 }
 
+make_idf_python_shim() {
+  local shim_dir="$RUN_DIR/python311-shim"
+  local py=""
+
+  if [[ -x "$HOME/anaconda3/bin/python3.11" ]]; then
+    py="$HOME/anaconda3/bin/python3.11"
+  elif command -v python3.11 >/dev/null 2>&1; then
+    py="$(command -v python3.11)"
+  else
+    echo "Python 3.11 was not found. ESP-IDF v5.5 works best with Python 3.11 here."
+    echo "Install it with Homebrew or Anaconda, then run this script again."
+    exit 1
+  fi
+
+  rm -rf "$shim_dir"
+  mkdir -p "$shim_dir"
+  ln -s "$py" "$shim_dir/python3"
+  ln -s "$py" "$shim_dir/python"
+  echo "$shim_dir"
+}
+
 ensure_idf() {
   if [[ ! -f "$IDF_PATH/export.sh" || ! -f "$IDF_PATH/install.sh" ]]; then
     echo "ESP-IDF was not found at: $IDF_PATH"
     echo "Set IDF_PATH to the ESP-IDF directory or install ESP-IDF v5.5.x."
     exit 1
   fi
+
+  local python_shim
+  python_shim="$(make_idf_python_shim)"
+  export PATH="$python_shim:$PATH"
 
   local export_log="$RUN_DIR/idf_export.log"
   if ! bash -c "source '$IDF_PATH/export.sh' >/dev/null" >"$export_log" 2>&1; then
