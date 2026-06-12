@@ -8,7 +8,9 @@ __pycache__/
 backend/.env
 backend/.venv/
 
+.run/
 firmware/build/
 firmware/managed_components/
 firmware/sdkconfig
+firmware/sdkconfig.local.defaults
 firmware/dependencies.lock

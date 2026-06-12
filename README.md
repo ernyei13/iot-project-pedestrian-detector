@@ -18,6 +18,16 @@ Smart visual alarm prototype for the ESP32-S3-EYE. The device captures camera fr
 - Telegram bot token and chat ID.
 - Wi-Fi network reachable by the ESP32-S3-EYE and the computer running the backend.
 
+## One-Command Startup
+
+The helper script starts Mosquitto, prepares the Python backend, configures the firmware Wi-Fi/MQTT settings, builds, flashes, and opens the ESP32 monitor:
+
+```bash
+./start_system.sh "Wi-Fi SSID" "Wi-Fi password"
+```
+
+If the ESP-IDF Python environment is missing, the script runs the ESP-IDF install step first. Local secrets are written only to ignored files: `backend/.env` and `firmware/sdkconfig.local.defaults`.
+
 ## Firmware Setup
 
 ```bash
