@@ -1,0 +1,29 @@
+idf_component_register(
+    SRCS
+        "alarm_mqtt.cpp"
+        "app_main.cpp"
+        "frame_cap_pipeline.cpp"
+        "lcd_preview.cpp"
+    INCLUDE_DIRS "."
+    REQUIRES
+        esp_event
+        esp_netif
+        esp_timer
+        esp_wifi
+        esp-dl
+        esp_lcd
+        mqtt
+        nvs_flash
+        who_cam
+        who_detect
+        who_frame_cap
+        who_task
+)
+
+idf_component_optional_requires(
+    PUBLIC
+        pedestrian_detect
+        espressif__pedestrian_detect
+        esp32_s3_eye_noglib
+        espressif__esp32_s3_eye_noglib
+)

@@ -1,0 +1,14 @@
+.DS_Store
+*.log
+*.tmp
+
+__pycache__/
+*.py[cod]
+
+backend/.env
+backend/.venv/
+
+firmware/build/
+firmware/managed_components/
+firmware/sdkconfig
+firmware/dependencies.lock

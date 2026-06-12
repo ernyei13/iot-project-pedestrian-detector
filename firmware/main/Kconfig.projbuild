@@ -1,0 +1,78 @@
+menu "Smart Visual Alarm"
+
+config SVA_DEVICE_ID
+    string "Device identifier"
+    default "esp32s3-eye-01"
+    help
+        Identifier included in every MQTT event.
+
+config SVA_WIFI_SSID
+    string "Wi-Fi SSID"
+    default ""
+    help
+        Leave empty to run detection without network publishing.
+
+config SVA_WIFI_PASSWORD
+    string "Wi-Fi password"
+    default ""
+
+config SVA_WIFI_MAX_RETRY
+    int "Wi-Fi maximum reconnect attempts"
+    range 1 30
+    default 5
+
+config SVA_WIFI_CONNECT_TIMEOUT_SECONDS
+    int "Wi-Fi startup wait timeout"
+    range 1 120
+    default 15
+
+config SVA_MQTT_URI
+    string "MQTT broker URI"
+    default "mqtt://192.168.1.100:1883"
+
+config SVA_MQTT_TOPIC
+    string "MQTT alert topic"
+    default "smart-visual-alarm/events"
+
+config SVA_MQTT_USERNAME
+    string "MQTT username"
+    default ""
+
+config SVA_MQTT_PASSWORD
+    string "MQTT password"
+    default ""
+
+config SVA_DETECTION_SCORE_THRESHOLD_PERCENT
+    int "Person detection threshold percent"
+    range 1 100
+    default 70
+
+config SVA_CONFIRMATION_FRAMES
+    int "Consecutive detection frames required"
+    range 1 20
+    default 3
+
+config SVA_ALERT_COOLDOWN_SECONDS
+    int "Alert cooldown seconds"
+    range 1 3600
+    default 30
+
+config SVA_DETECTION_FPS
+    int "Detector frame rate cap"
+    range 1 30
+    default 5
+
+config SVA_LCD_PREVIEW
+    bool "Show camera preview on ESP32-S3-EYE LCD"
+    default y
+    help
+        Draw the latest analyzed camera frame on the onboard LCD with a
+        bounding box for the best person candidate.
+
+config SVA_LCD_BOX_LINE_WIDTH
+    int "LCD bounding box line width"
+    depends on SVA_LCD_PREVIEW
+    range 1 12
+    default 3
+
+endmenu

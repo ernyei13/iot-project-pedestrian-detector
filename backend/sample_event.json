@@ -1,0 +1,14 @@
+{
+  "event_id": "esp32s3-eye-sim-000001",
+  "device_id": "esp32s3-eye-01",
+  "timestamp": "uptime_us:123456789",
+  "label": "person",
+  "confidence": 0.981,
+  "confirmation_frames": 3,
+  "box": {
+    "x_min": 24,
+    "y_min": 18,
+    "x_max": 156,
+    "y_max": 216
+  }
+}
