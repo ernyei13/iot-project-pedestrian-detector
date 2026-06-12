@@ -17,6 +17,7 @@ Smart visual alarm prototype for the ESP32-S3-EYE. The device captures camera fr
 - Mosquitto MQTT broker.
 - Telegram bot token and chat ID.
 - Wi-Fi network reachable by the ESP32-S3-EYE and the computer running the backend.
+  If the router blocks device-to-device traffic, use the public broker mode below.
 
 ## One-Command Startup
 
@@ -32,6 +33,18 @@ To start the broker/backend and open the serial monitor without flashing the ESP
 
 ```bash
 ./start_system.sh --no-flash "Wi-Fi SSID" "Wi-Fi password"
+```
+
+If the ESP32 connects to Wi-Fi but MQTT times out when connecting to the Mac, the router is probably blocking LAN client-to-client traffic. In that case, flash once using the public MQTT broker mode:
+
+```bash
+./start_system.sh --public-broker "Wi-Fi SSID" "Wi-Fi password"
+```
+
+After that first public-broker flash, you can restart without flashing:
+
+```bash
+./start_system.sh --public-broker --no-flash "Wi-Fi SSID" "Wi-Fi password"
 ```
 
 ## Firmware Setup
