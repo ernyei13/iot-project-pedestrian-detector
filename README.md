@@ -28,6 +28,12 @@ The helper script starts Mosquitto, prepares the Python backend, configures the 
 
 If the ESP-IDF Python environment is missing, the script runs the ESP-IDF install step first. Local secrets are written only to ignored files: `backend/.env` and `firmware/sdkconfig.local.defaults`.
 
+To start the broker/backend and open the serial monitor without flashing the ESP32 again:
+
+```bash
+./start_system.sh --no-flash "Wi-Fi SSID" "Wi-Fi password"
+```
+
 ## Firmware Setup
 
 ```bash

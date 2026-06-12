@@ -14,12 +14,16 @@ BACKEND_PID=""
 usage() {
   cat <<EOF
 Usage:
-  ./start_system.sh [wifi_ssid] [wifi_password]
+  ./start_system.sh [--no-flash] [wifi_ssid] [wifi_password]
 
 What it starts:
   1. local Mosquitto MQTT broker
   2. Python MQTT-to-Telegram backend
   3. ESP-IDF build, flash, and serial monitor
+
+Options:
+  --no-flash    Start broker/backend and open serial monitor only.
+                Does not build or flash the ESP32.
 
 Optional environment variables:
   IDF_PATH=/path/to/esp-idf
@@ -233,10 +237,36 @@ start_backend() {
 }
 
 main() {
-  if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
-    usage
-    exit 0
-  fi
+  local no_flash="false"
+  local positional=()
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -h|--help)
+        usage
+        exit 0
+        ;;
+      --no-flash)
+        no_flash="true"
+        shift
+        ;;
+      --)
+        shift
+        while [[ $# -gt 0 ]]; do
+          positional+=("$1")
+          shift
+        done
+        ;;
+      -*)
+        echo "Unknown option: $1"
+        usage
+        exit 1
+        ;;
+      *)
+        positional+=("$1")
+        shift
+        ;;
+    esac
+  done
 
   mkdir -p "$RUN_DIR"
   trap cleanup EXIT INT TERM
@@ -245,8 +275,8 @@ main() {
   require_cmd mosquitto "Install Mosquitto with: brew install mosquitto"
   require_cmd nc "The nc command is needed to check whether port 1883 is already open."
 
-  local wifi_ssid="${1:-}"
-  local wifi_password="${2:-}"
+  local wifi_ssid="${positional[0]:-}"
+  local wifi_password="${positional[1]:-}"
   if [[ -z "$wifi_ssid" ]]; then
     read -r -p "Wi-Fi SSID: " wifi_ssid
   fi
@@ -270,14 +300,23 @@ main() {
   echo "  $RUN_DIR/mosquitto.log"
   echo "  $RUN_DIR/backend.log"
   echo
-  echo "Building, flashing, and opening serial monitor..."
+  if [[ "$no_flash" == "true" ]]; then
+    echo "No-flash mode: opening serial monitor only."
+    echo "The already-flashed firmware stays unchanged."
+  else
+    echo "Building, flashing, and opening serial monitor..."
+  fi
   echo "Stop the monitor with Ctrl+] or Ctrl+C. Background services stop when this script exits."
 
   cd "$FIRMWARE_DIR"
-  rm -f sdkconfig
-  idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults;sdkconfig.local.defaults" set-target esp32s3
-  idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults;sdkconfig.local.defaults" build
-  idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults;sdkconfig.local.defaults" flash monitor
+  if [[ "$no_flash" == "true" ]]; then
+    idf.py monitor
+  else
+    rm -f sdkconfig
+    idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults;sdkconfig.local.defaults" set-target esp32s3
+    idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults;sdkconfig.local.defaults" build
+    idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults;sdkconfig.local.defaults" flash monitor
+  fi
 }
 
 main "$@"
